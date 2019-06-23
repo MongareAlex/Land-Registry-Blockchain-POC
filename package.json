@@ -1,0 +1,11 @@
+{
+  "name": "landsys06",
+  "version": "0.0.1",
+  "description": "initial land network ",
+  "scripts": {
+    "test": "mocha --recursive"
+  },
+  "author": "Aleki",
+  "email": "mongzalekey@gmail.com",
+  "license": "Apache-2.0"
+}

@@ -1,0 +1,59 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+ //namespace
+namespace org.land.landsys.offerAsset
+import org.land.landsys.participant.LANDSYSClient
+import org.land.landsys.landparcel.parcel
+
+
+
+
+asset offer identified by offerID{//offer
+o String offerID
+o OfferStatus offerstatus default="PENDING"
+--> LANDSYSClient client
+--> parcel landParcel
+}
+
+
+
+
+enum OfferStatus{
+  o ACCEPTED
+  o REJECTED
+  o PENDING
+}
+
+transaction makeOffer //creates an offer instance,perm CR on Offer asset
+{
+o String offerID
+o String parcelID
+}
+
+transaction rejectOffer //A seller rejects an offer ,perm Delete on Offer asset
+{
+o String offerID
+}
+
+event makeOfferEvent {
+  o String offerID
+--> parcel landParcel
+--> LANDSYSClient buyer
+}
+
+event rejectOfferEvent
+{
+  o String offerID
+}

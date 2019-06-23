@@ -1,0 +1,115 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+rule LandSYSPermissionSystem {
+  description: "can READ the system registries"
+  participant: "ANY"
+  operation: READ
+  resource: "org.hyperledger.composer.system.**"
+  action: ALLOW  
+}
+
+rule NetworkAdminSystem {
+    description: "Grant business network administrators full access to user resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"//composer ,system and network tools access for the network administrators
+    action: ALLOW
+}
+
+rule ParticipantRegistryControlPermission {
+  description:  "give admin ALL access to LANDSYS participant types"
+  participant: "org.hyperledger.composer.system.NetworkAdmin"
+  operation: ALL
+  resource: "org.land.landsys.participant.*"
+  action: ALLOW  
+}
+
+rule BNAdminParticipantRegistryControlPermission {
+  description:  "give Business Network admin ALL access to LANDSYS participant types"
+  participant: "org.land.landsys.participant.LANDSYSPersonnel"
+  operation: ALL
+  resource: "org.land.landsys.participant.*"
+  action: ALLOW  
+}
+
+rule LANDSYSParticipantPermissionHistorian{//needed for landsysparticipants so execute transactions
+  description:"Can Write Historian Record to the Historian"
+  participant:"org.land.landsys.participant.LANDSYSParticipant"
+  operation:CREATE,READ
+  resource:"org.hyperledger.composer.system.HistorianRecord"
+  action:ALLOW
+}
+
+// permission to create land asset by having access to the createLand transaction
+rule LANDSYSPersonnelPermissionCreateLand{
+ description:"only landsys personnel create A land asset"
+  participant:"org.land.landsys.participant.LANDSYSPersonnel"
+  operation:CREATE
+  resource:"org.land.landsys.landparcel.parcel"
+  transaction:"org.land.landsys.landparcel.createLand"
+  action:ALLOW
+}
+rule LANDSYSPersonnelPermissionTransferLand{
+ description:"only landsys personnel transfer A land asset"
+  participant:"org.land.landsys.participant.LANDSYSPersonnel"
+  operation:CREATE
+  resource:"org.land.landsys.landparcel.parcel"
+  transaction:"org.land.landsys.landparcel.transferLand"
+  action:ALLOW
+}
+ rule LANDSYSParticipantOpenBidPermission{
+    description: "Allow all participants full access to their assets"
+    participant(p): "org.land.landsys.participant.LANDSYSClient"
+    operation: CREATE
+    resource(r): "org.land.landsys.landparcel.parcel"
+    transaction:"org.land.landsys.landparcel.openBid"
+    condition: (r.owner.getIdentifier() === p.getIdentifier())
+    action: ALLOW
+ }
+
+  rule LANDSYSParticipantCloseBidPermission{
+    description: "Allow all participants full access to their assets"
+    participant(p): "org.land.landsys.participant.LANDSYSClient"
+    operation: CREATE
+    resource(r): "org.land.landsys.landparcel.parcel"
+    transaction:"org.land.landsys.landparcel.closeBid"
+    condition: (r.owner.getIdentifier() === p.getIdentifier())
+    action: ALLOW
+ }
+
+
+  rule LANDSYSParticipantMakeOfferPermission{
+    description: "Allow Clients to make offers on a land asset"
+    participant: "org.land.landsys.participant.LANDSYSClient"//in this case a buyer
+    operation: CREATE
+    resource: "org.land.landsys.offerAsset.offer"
+    transaction:"org.land.landsys.offerAsset.makeOffer"
+    action: ALLOW
+ }
+
+  rule LANDSYSParticipantRejectOfferPermission{//A seller can reject offers he doesnt see fit 
+    description: "Allow Clients to reject offers on  their Land asset"
+    participant: "org.land.landsys.participant.LANDSYSClient"//In this case a seller
+    operation: CREATE
+    resource: "org.land.landsys.offerAsset.offer"
+    transaction:"org.land.landsys.offerAsset.rejectOffer"
+    action: ALLOW
+ }
+
+
+
+
+
+
